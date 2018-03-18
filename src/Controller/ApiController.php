@@ -64,7 +64,7 @@ class ApiController extends Controller
         } catch (Exception $ex) {
             $code = 500;
             $error = true;
-            $message = "An error has occurred trying to get the current Board - Error: {$ex->getMessage()}";
+            $message = "An error has occurred trying to get the recipes - Error: {$ex->getMessage()}";
         }
 
         $response = [
