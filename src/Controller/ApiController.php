@@ -75,4 +75,49 @@ class ApiController extends Controller
 
         return new Response($serializer->serialize($response, 'json'));
     }
+
+    /**
+     * @Rest\Get("/v1/screendata.{_format}", name="screen_data_list", defaults={"_format":"json"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Gets screen data"
+     * )
+     *
+     *
+     * @SWG\Tag(name="Screen Data")
+     * @param Request $request
+     * @return Response
+     * @internal param $search
+     */
+    public function getScreenDataAction(Request $request)
+    {
+        $serializer = $this->get('jms_serializer');
+        $client = new Client();
+        $code = 200;
+        $error = false;
+        $message = '';
+        $dataJson = '';
+        $dataArray = array();
+
+        try {
+            $uri = 'http://www.recipepuppy.com/api/?q=vegetarian';
+            $res = $client->request('GET', $uri);
+            $dataJson = $res->getBody()->getContents();
+            $dataArray = json_decode($dataJson, true);
+
+        } catch (Exception $ex) {
+            $code = 500;
+            $error = true;
+            $message = "An error has occurred trying to get the recipes - Error: {$ex->getMessage()}";
+        }
+
+        $response = [
+            'code' => $code,
+            'error' => $error,
+            'data' => $code == 200 ? $dataArray['results'] : $message,
+        ];
+
+        return new Response($serializer->serialize($response, 'json'));
+    }
 }
